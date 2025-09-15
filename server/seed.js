@@ -19,11 +19,11 @@ const USERS_DATA = [
 ];
 
 const STUDENTS_DATA = [
-    { user: USERS_DATA[0]._id, name: 'Sajin S', registerNumber: '951021CS001', email: 'sajin.student@example.com' },
+    { user: USERS_DATA[0]._id, name: 'Sajin S', registerNumber: '951021CS001', email: 'student@demo.com' },
 ];
 
 const STAFF_DATA = [
-    { user: USERS_DATA[2]._id, name: 'John Doe', staffId: 'STF001', email: 'john.staff@example.com', subjects: ['os', 'ai'] },
+    { user: USERS_DATA[2]._id, name: 'John Doe', staffId: 'STF001', email: 'staff@demo.com', subjects: ['os', 'ai'] },
 ];
 
 const NOTIFICATIONS_DATA = [
@@ -36,30 +36,47 @@ const NOTES_MESSAGES = [
   { sender: 'Faculty', content: 'Please find the attached PDF for ASP.NET session state management.', timestamp: '11:00 AM', subjectId: 'asp' },
 ];
 
+const connectDBAndSeed = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('MongoDB Connected for Seeding...');
 
-// Connect to DB
-mongoose.connect(process.env.MONGO_URI);
+        if (process.argv[2] === '-d') {
+            await deleteData();
+        } else {
+            await importData();
+        }
+
+        await mongoose.connection.close();
+        console.log('MongoDB Connection Closed.');
+        process.exit();
+    } catch (err) {
+        console.error(`Error during seeding process: ${err.message}`);
+        process.exit(1);
+    }
+}
 
 // Import data into DB
 const importData = async () => {
   try {
+    console.log('Destroying existing data...');
     await User.deleteMany();
     await Student.deleteMany();
     await Staff.deleteMany();
     await Notification.deleteMany();
     await Note.deleteMany();
 
+    console.log('Importing new data...');
     await User.create(USERS_DATA);
     await Student.create(STUDENTS_DATA);
     await Staff.create(STAFF_DATA);
     await Notification.create(NOTIFICATIONS_DATA);
     await Note.create(NOTES_MESSAGES);
     
-    console.log('Data Imported...');
-    process.exit();
+    console.log('Data Imported successfully!');
   } catch (err) {
     console.error(err);
-    process.exit(1);
+    throw err; // throw error to be caught by the main handler
   }
 };
 
@@ -73,15 +90,10 @@ const deleteData = async () => {
     await Note.deleteMany();
 
     console.log('Data Destroyed...');
-    process.exit();
   } catch (err) {
     console.error(err);
-    process.exit(1);
+    throw err;
   }
 };
 
-if (process.argv[2] === '-d') {
-  deleteData();
-} else {
-  importData();
-}
+connectDBAndSeed();

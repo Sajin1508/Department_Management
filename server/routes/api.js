@@ -116,7 +116,13 @@ router.post('/notifications', async (req, res) => {
             isRead: false
         });
         const notification = await newNotification.save();
-        res.status(201).json({ id: notification._id, ...notification._doc});
+        res.status(201).json({ 
+            id: notification._id, 
+            title: notification.title, 
+            content: notification.content,
+            date: notification.date,
+            isRead: notification.isRead
+        });
     } catch (err) {
         res.status(500).send('Server Error');
     }
@@ -125,7 +131,13 @@ router.post('/notifications', async (req, res) => {
 router.get('/notes', async (req, res) => {
     try {
         const notes = await Note.find();
-        res.json(notes.map(n => ({ id: n._id, ...n._doc })));
+        res.json(notes.map(n => ({ 
+            id: n._id,
+            sender: n.sender,
+            content: n.content,
+            timestamp: n.timestamp,
+            subjectId: n.subjectId
+        })));
     } catch (err) {
         res.status(500).send('Server Error');
     }
@@ -140,7 +152,13 @@ router.post('/notes', async (req, res) => {
             sender: 'Faculty'
         });
         const note = await newNote.save();
-        res.status(201).json({ id: note._id, ...note._doc });
+        res.status(201).json({
+            id: note._id,
+            sender: note.sender,
+            content: note.content,
+            timestamp: note.timestamp,
+            subjectId: note.subjectId
+        });
     } catch (err) {
         res.status(500).send('Server Error');
     }

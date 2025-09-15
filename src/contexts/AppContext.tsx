@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import type { Notification, NoteMessage, Student, Staff, User } from '../types';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 interface AppContextType {
   dayOrder: string;
