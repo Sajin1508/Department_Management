@@ -1,0 +1,5 @@
+{
+  "name": "Department Management",
+  "description": "A student panel for managing academic information like timetables, marks, attendance, and notifications.",
+  "requestFramePermissions": []
+}
